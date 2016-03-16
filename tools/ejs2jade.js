@@ -329,4 +329,8 @@ ejs2jade.convert = function (ejs) {
     };
 };
 
-module.exports = ejs2jade;
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = ejs2jade;
+} else {
+    window.ejs2jade = ejs2jade;
+}
