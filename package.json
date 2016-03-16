@@ -34,7 +34,7 @@
     "karma-chrome-launcher": "^0.2.2",
     "karma-jasmine": "^0.3.7",
     "karma-phantomjs-launcher": "^1.0.0",
-    "phantomjs": "^1.9.17",
+    "phantomjs-prebuilt": "^1.9.19",
     "shelljs": "^0.6.0"
   }
 }

@@ -16,6 +16,10 @@ gulp.task('mocha', function (done) {
     sh.exec('mocha', done);
 });
 
+gulp.task('start', function (done) {
+    sh.exec('node app.js', done);
+});
+
 gulp.task('test', function (done) {
     karma.start({
         configFile: __dirname + '/tests/karma.conf.js',
@@ -24,4 +28,6 @@ gulp.task('test', function (done) {
 });
 
 gulp.task('release', ['jshint', 'mocha', 'test']);
+
+gulp.task('default', ['jshint', 'mocha', 'test', 'start'])
 
