@@ -22,7 +22,9 @@
   "dependencies": {
     "body-parser": "^1.15.0",
     "connect-busboy": "0.0.2",
-    "express": "^4.13.4"
+    "express": "^4.13.4",
+    "jade": "^1.11.0",
+    "semantic-ui": "^2.1.8"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
