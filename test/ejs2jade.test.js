@@ -38,4 +38,12 @@ describe('ejs 2 jade', function () {
 
         test(ejs, jade);
     });
+
+    it('should convert inline ejs server render code to jade', function () {
+        var ejs =
+            '<div class="test"><%= cdn.normal %></div>';
+        var jade = 'div(class="test") #{cdn.normal}';
+
+        test(ejs, jade);
+    });
 });

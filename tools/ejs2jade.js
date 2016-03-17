@@ -11,7 +11,7 @@ function duplicateString(s, count) {
 }
 
 var CharType = {
-    Letter: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_-{}[],;:',
+    Letter: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_-{}[],;:.',
     TagStart: '<',
     TagEnd: '>',
     WhiteSpace: ' \n',
@@ -19,6 +19,7 @@ var CharType = {
     EqualSign: '=',
     DoubleQuote: '"',
     Unknown: '',
+    Percentage: '%',
     EOF: 'EOF'
 };
 
@@ -35,6 +36,9 @@ var States = {
     Start: 'START',
     End: 'END',
     Text: 'text',
+    EJSCodeStart: '<%=',
+    EJSCode: 'ejscode',
+    EJSCodeEnd: '%>',
     Error: ''
 };
 
@@ -120,8 +124,41 @@ ejs2jade.convert = function (ejs) {
                 token += c;
             } else if (charType === CharType.Slash) {
                 state = States.ClosingTag;
+            } else if (charType === CharType.Percentage) {
+                token = '';
+                state = States.EJSCodeStart;
             } else {
-                re([CharType.Letter, CharType.Slash], arguments.callee);
+                re([CharType.Letter, CharType.Slash, CharType.Percentage], arguments.callee);
+            }
+        }
+
+        function handleEJSCodeStart() {
+            if (charType === CharType.EqualSign) {
+                state = States.EJSCode;
+            } else {
+                re([CharType.EqualSign], arguments.callee);
+            }
+        }
+
+        function handleEJSCode() {
+            if (charType === CharType.WhiteSpace) {
+
+            } else if (charType === CharType.Letter) {
+                token += c;
+            } else if (charType === CharType.Percentage) {
+                jade += ' #{' + token + '}';
+                token = '';
+                state = States.EJSCodeEnd;
+            } else {
+                re([CharType.WhiteSpace, CharType.Letter, CharType.Percentage], arguments.callee);
+            }
+        }
+
+        function handleEJSCodeEnd() {
+            if (charType === CharType.TagEnd) {
+                state = States.TagEnd;
+            } else {
+                re([CharType.TagEnd], arguments.callee);
             }
         }
 
@@ -313,6 +350,15 @@ ejs2jade.convert = function (ejs) {
             case States.Text:
                 handleText();
                 break;
+            case States.EJSCodeStart:
+                handleEJSCodeStart();
+                break;
+            case States.EJSCode:
+                handleEJSCode();
+                break;
+            case States.EJSCodeEnd:
+                handleEJSCodeEnd();
+                break;
             default :
                 raiseOutOfStateError(i, line, col, c);
                 break;
@@ -327,7 +373,8 @@ ejs2jade.convert = function (ejs) {
         jade: jade,
         errors: errors
     };
-};
+}
+;
 
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = ejs2jade;
