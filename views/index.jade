@@ -7,15 +7,15 @@ html
         link(rel="stylesheet", type="text/css", href="#{cdn.host}semantic/dist/semantic.min.css?#{cdn.version}")
     body
         div.ui.padded.container(ng-app="geekModule", ng-controller="ejs2jadeCtrl")
-            form.ui.form
+            form.ui.form(ng-class="{'loading': loading}", ng-submit="convert()", name="convertForm")
                 div.field
                     div.ui.grid
                         div.seven.wide.column
                             h3 EJS / html
-                            textarea(ng-model="data.ejs", style="width: 100%;", rows="30")
+                            textarea(ng-model="data.ejs", style="width: 100%;", rows="30", ng-required="true")
                         div.two.wide.column
                             h3 &nbsp;
-                            button.ui.button(ng-click="convert()") Convert!
+                            button.ui.button(ng-disabled="!convertForm.$valid") Convert!
                         div.seven.wide.column
                             h3 jade / pug
                             textarea(ng-model="data.jade", rows="30", style="width: 100%;")
@@ -28,7 +28,7 @@ html
         script(src="#{cdn.host}the-ejs2jade.js?#{cdn.version}")
         script(type="text/javascript").
             angular.module('geekModule', [])
-                    .controller('ejs2jadeCtrl', ['$scope', function ($scope) {
+                    .controller('ejs2jadeCtrl', ['$scope', '$timeout', function ($scope, $timeout) {
                         $scope.data = {
                             ejs: '',
                             jade: '',
@@ -36,9 +36,14 @@ html
                         };
 
                         $scope.convert = function () {
-                            var ret = ejs2jade.convert($scope.data.ejs);
-                            $scope.data.jade = ret.jade;
-                            $scope.data.errors = ret.errors;
+                            $scope.loading = true;
+
+                            $timeout(function () {
+                                var ret = ejs2jade.convert($scope.data.ejs);
+                                $scope.data.jade = ret.jade;
+                                $scope.data.errors = ret.errors;
+                                $scope.loading = false;
+                            }, 100);
                         };
                     }])
             ;
