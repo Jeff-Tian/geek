@@ -49,7 +49,7 @@ function getCharType(c) {
         }
     }
 
-    return CharType.Unknown;
+    return CharType.Letter;
 }
 
 var errors = [];
