@@ -1,0 +1,49 @@
+html
+    head
+        meta(charset="utf-8")
+        meta(http-quiv="X-UA-Compatible", content="IE=edge,chrome=1")
+        meta(name="view-port", content="width=device-width, initial-scale=1.0, maximum-scale=1.0")
+        title!= title
+        link(rel="stylesheet", type="text/css", href="#{cdn.host}semantic/dist/semantic.min.css?#{cdn.version}")
+    body
+        div.ui.padded.container(ng-app="geekModule", ng-controller="ejs2jadeCtrl")
+            form.ui.form(ng-class="{'loading': loading}", ng-submit="convert()", name="convertForm")
+                div.field
+                    div.ui.grid
+                        div.seven.wide.column
+                            h3 EJS / html
+                            textarea(ng-model="data.ejs", style="width: 100%;", rows="30", ng-required="true")
+                        div.two.wide.column
+                            h3 &nbsp;
+                            button.ui.button(ng-disabled="!convertForm.$valid") Convert!
+                        div.seven.wide.column
+                            h3 jade / pug
+                            textarea(ng-model="data.jade", rows="30", style="width: 100%;")
+                div.field
+                    pre(ng-model="data.errors")
+
+        script(src="#{cdn.host}bower_components/jquery/dist/jquery.min.js?#{cdn.version}")
+        script(src="#{cdn.host}semantic/dist/semantic.min.js?#{cdn.version}")
+        script(src="#{cdn.host}bower_components/angular/angular.min.js?#{cdn.version}")
+        script(src="#{cdn.host}the-ejs2jade.js?#{cdn.version}")
+        script(type="text/javascript").
+            angular.module('geekModule', [])
+                    .controller('ejs2jadeCtrl', ['$scope', '$timeout', function ($scope, $timeout) {
+                        $scope.data = {
+                            ejs: '',
+                            jade: '',
+                            errors: []
+                        };
+
+                        $scope.convert = function () {
+                            $scope.loading = true;
+
+                            $timeout(function () {
+                                var ret = ejs2jade.convert($scope.data.ejs);
+                                $scope.data.jade = ret.jade;
+                                $scope.data.errors = ret.errors;
+                                $scope.loading = false;
+                            }, 100);
+                        };
+                    }])
+            ;

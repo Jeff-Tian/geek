@@ -1,0 +1,25 @@
+{
+  "name": "geek",
+  "description": "Whatever geek tools.",
+  "main": "app.js",
+  "authors": [
+    "http://zizhujy.com"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "geek"
+  ],
+  "homepage": "http://geek.zizhujy.com",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "public/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^2.2.1",
+    "angular": "^1.5.0"
+  }
+}
