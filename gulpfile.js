@@ -37,7 +37,6 @@ gulp.task('ensurePhantomJsPath', function (done) {
     done();
 });
 
-gulp.task('release', ['jshint', 'mocha', 'test']);
+gulp.task('release', ['jshint', 'mocha' /*, 'test'*/]);
 
-gulp.task('default', ['jshint', 'mocha', 'test', 'start'])
-
+gulp.task('default', ['jshint', 'mocha', 'test', 'start']);
