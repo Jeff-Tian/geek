@@ -1,7 +1,7 @@
 module.exports = {
     cdn: {
         host: '/',
-        version: '1'
+        version: '2'
     }
 
 };
