@@ -96,6 +96,7 @@ ejs2jade.convert = function (ejs) {
     var tagStack = [];
     var attrCount = 0;
 
+    console.log('============ start converting... =======');
     while (i < ejs.length) {
         function re(expectedCharTypes, caller) {
             var callerName = caller || arguments.callee;
@@ -180,7 +181,7 @@ ejs2jade.convert = function (ejs) {
                 rememberTag();
                 attrCount = 0;
                 state = States.WhiteSpace;
-            } else if (charType === charType.TagEnd) {
+            } else if (charType === CharType.TagEnd) {
                 rememberTag();
                 attrCount = 0;
                 state = States.TagEnd;
@@ -307,15 +308,20 @@ ejs2jade.convert = function (ejs) {
         function handleNewLine() {
             if (c === '\n') {
                 line++;
+                console.log('line = ', line);
                 col = 0;
             }
         }
 
+        console.log('--------- a loop --------------');
         var c = ejs[i];
+        console.log('c = ', c);
         var charType = getCharType(c);
+        console.log('charType = ', charType);
 
         handleNewLine();
 
+        console.log('state = ', state);
         switch (state) {
             case States.Start:
                 handleStart();
@@ -367,6 +373,8 @@ ejs2jade.convert = function (ejs) {
         i++;
         col++;
     }
+
+    console.log('========== end converting. ===========');
 
     return {
         ejs: ejs,

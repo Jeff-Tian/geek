@@ -1,13 +1,6 @@
-var assert = require('assert');
-var ejs2jade = require('../tools/ejs2jade');
+var test = require('./prepare');
 
 describe('ejs 2 jade', function () {
-    function test(ejs, expectedJade) {
-        var res = ejs2jade.convert(ejs);
-        assert.equal(expectedJade, res.jade);
-        assert.deepStrictEqual([], res.errors);
-    }
-
     it('should convert one line ejs code to jade', function () {
         var ejs = '<div class="test"></div>';
         var jade = 'div(class="test")';
