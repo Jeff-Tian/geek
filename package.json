@@ -23,12 +23,15 @@
     "body-parser": "^1.15.0",
     "connect-busboy": "0.0.2",
     "express": "^4.13.4",
+    "i18n": "^0.8.2",
     "jade": "^1.11.0",
+    "localeHelper": "git+https://github.com/Jeff-Tian/localeHelper.git",
     "semantic-ui": "^2.1.8"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-jshint": "^2.0.0",
+    "jade": "^1.11.0",
     "jasmine-core": "^2.4.1",
     "jshint": "^2.9.1",
     "jshint-stylish": "^2.1.0",

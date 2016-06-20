@@ -4,6 +4,8 @@ var bodyParser = require('body-parser');
 var busboy = require('connect-busboy');
 var jade = require('jade');
 
+require('localeHelper')(app, __dirname);
+
 var staticFolder = __dirname + '/public';
 var viewFolder = __dirname + '/views';
 app.set('views', viewFolder);
