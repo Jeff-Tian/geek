@@ -217,8 +217,15 @@ ejs2jade.convert = function (ejs) {
                 token = '';
                 attrCount++;
                 state = States.ValueStart;
+            } else if (charType === CharType.TagEnd) {
+                jade += (attrCount === 0 ? '(' : ', ') + token;
+                token = '';
+                attrCount++;
+                state = States.ValueEnd;
+                i--;
+            } else if (charType === CharType.WhiteSpace) {
             } else {
-                re([CharType.Letter, CharType.EqualSign], arguments.callee);
+                re([CharType.Letter, CharType.EqualSign, CharType.TagEnd], arguments.callee);
             }
         }
 
