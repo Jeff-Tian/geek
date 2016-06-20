@@ -1,5 +1,7 @@
 # geek
-Convert EJS/html snippet to jade/pug snippet. http://geek.zizhujy.com
+Convert EJS/html snippet to jade/pug snippet.
+将 ejs/html 代码块转换成 jade/pug 代码块。
+http://ejs2pug.jijiyy.me
 
 # CI Server
-http://jiy.zizhujy.com:8080/job/geek/
+http://52.33.84.57:8080/job/geek/
