@@ -237,12 +237,19 @@ ejs2jade.convert = function (ejs) {
         }
 
         function handleAttributeEnd() {
+            function rememberAttr() {
+                jade += token + '=""';
+                token = '';
+            }
+
             if (charType === CharType.Letter) {
+                rememberAttr();
                 token += c;
                 state = States.Attribute;
             } else if (charType === CharType.EqualSign) {
                 state = States.ValueStart;
             } else if (charType === CharType.TagEnd) {
+                // rememberAttr();
                 state = States.ValueEnd;
                 i--;
             } else if (charType === CharType.WhiteSpace) {
