@@ -54,7 +54,7 @@ function getCharType(c) {
 
 var errors = [];
 
-function raiseCharError(expectedTypes, actualType, i, line, col, char, caller) {
+function raiseCharError(expectedTypes, actualType, i, line, col, char, caller, token, tagStack) {
     function interpretSpeicalChar(c) {
         if (c === '\n') {
             return '\\n';
@@ -64,7 +64,9 @@ function raiseCharError(expectedTypes, actualType, i, line, col, char, caller) {
     }
 
     var message = 'expect ' + expectedTypes.join(', ') + ', actual ' + actualType + '; at chart ' + i + ', line = ' + line + ', col = ' + col + ' , char = ' + char + '(' + interpretSpeicalChar(char) +
-        ')  caller = ' + (caller || arguments.callee);
+        ') with token = ' + token + ', ' +
+        ' tagStack = ' + tagStack +
+        '  caller = ' + (caller || arguments.callee);
 
     console.error(message);
 
@@ -87,6 +89,7 @@ function raiseOutOfStateError(i, line, col, char) {
 
 ejs2jade.convert = function (ejs) {
     var jade = '';
+    var selfClosedTags = ['input', 'br'];
 
     var i = 0;
     var line = 1;
@@ -108,7 +111,7 @@ ejs2jade.convert = function (ejs) {
                 callerName = callerName.substr(0, index + 1);
             }
 
-            raiseCharError(expectedCharTypes, charType, i, line, col, c, callerName);
+            raiseCharError(expectedCharTypes, charType, i, line, col, c, callerName, token, tagStack);
         }
 
         function handleStart() {
@@ -165,9 +168,13 @@ ejs2jade.convert = function (ejs) {
 
         function handleTag() {
             function rememberTag() {
+                console.log('!!!remembering tag: ', token);
+
+                var indents = selfClosedTags.indexOf(tagStack[tagStack.length - 1]) >= 0 ? tagStack.length - 1 : tagStack.length;
+
                 if (tagStack.length > 0) {
                     jade += '\n';
-                    jade += duplicateString('\t', tagStack.length);
+                    jade += duplicateString('\t', indents);
                 }
 
                 jade += token;
@@ -254,6 +261,8 @@ ejs2jade.convert = function (ejs) {
                 consumeTokenAsAttr();
                 token += c;
                 state = States.Attribute;
+            } else if (selfClosedTags.indexOf(tagStack[tagStack.length - 1]) >= 0) {
+
             } else {
                 re([CharType.WhiteSpace, CharType.Attribute, CharType.TagEnd], arguments.callee);
             }
@@ -315,13 +324,14 @@ ejs2jade.convert = function (ejs) {
 
         console.log('--------- a loop --------------');
         var c = ejs[i];
-        console.log('c = ', c);
+        // console.log('c = ', c);
         var charType = getCharType(c);
-        console.log('charType = ', charType);
+        // console.log('charType = ', charType);
 
         handleNewLine();
 
         console.log('state = ', state);
+        console.log('token = ', token);
         switch (state) {
             case States.Start:
                 handleStart();
