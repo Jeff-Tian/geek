@@ -175,6 +175,8 @@ ejs2jade.convert = function (ejs) {
                 if (tagStack.length > 0) {
                     jade += '\n';
                     jade += duplicateString('\t', indents);
+                } else if (jade !== '') {
+                    jade += '\n';
                 }
 
                 jade += token;
