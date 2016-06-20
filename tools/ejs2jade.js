@@ -28,6 +28,7 @@ var States = {
     Tag: 'abc',
     WhiteSpace: ' ',
     Attribute: 'key',
+    AttributeEnd: 'key\b',
     ValueStart: '"{',
     Value: 'value',
     ValueEnd: '}"',
@@ -212,22 +213,42 @@ ejs2jade.convert = function (ejs) {
         }
 
         function handleAttribute() {
+            function rememberAttr() {
+                jade += (attrCount === 0 ? '(' : ', ') + token;
+                token = '';
+                attrCount++;
+            }
+
             if (charType === CharType.Letter) {
                 token += c;
             } else if (charType === CharType.EqualSign) {
-                jade += (attrCount === 0 ? '(' : ', ') + token;
-                token = '';
-                attrCount++;
+                rememberAttr();
                 state = States.ValueStart;
             } else if (charType === CharType.TagEnd) {
-                jade += (attrCount === 0 ? '(' : ', ') + token;
-                token = '';
-                attrCount++;
+                rememberAttr();
                 state = States.ValueEnd;
                 i--;
             } else if (charType === CharType.WhiteSpace) {
+                rememberAttr();
+                state = States.AttributeEnd;
             } else {
-                re([CharType.Letter, CharType.EqualSign, CharType.TagEnd], arguments.callee);
+                re([CharType.Letter, CharType.EqualSign, CharType.TagEnd, CharType.WhiteSpace], arguments.callee);
+            }
+        }
+
+        function handleAttributeEnd() {
+            if (charType === CharType.Letter) {
+                token += c;
+                state = States.Attribute;
+            } else if (charType === CharType.EqualSign) {
+                state = States.ValueStart;
+            } else if (charType === CharType.TagEnd) {
+                state = States.ValueEnd;
+                i--;
+            } else if (charType === CharType.WhiteSpace) {
+
+            } else {
+                re([CharType.Letter, CharType.EqualSign, CharType.TagEnd, CharType.WhiteSpace], arguments.callee);
             }
         }
 
@@ -383,6 +404,9 @@ ejs2jade.convert = function (ejs) {
                 break;
             case States.EJSCodeEnd:
                 handleEJSCodeEnd();
+                break;
+            case States.AttributeEnd:
+                handleAttributeEnd();
                 break;
             default :
                 raiseOutOfStateError(i, line, col, c);
