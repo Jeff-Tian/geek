@@ -5,12 +5,16 @@ describe('angular 2 grammer', function () {
         test('<ion-navbar *navbar>', 'ion-navbar(\'*navbar\'="")');
     });
 
-    it('handle extra space', function () {
+    it('handles extra space', function () {
         test('<ion-navbar *navbar >', 'ion-navbar(\'*navbar\'="")');
         test(
             '<ion-navbar *navbar>\
                 <ion-title>\
                 </ion-title>\
             </ion-navbar>', 'ion-navbar(\'*navbar\'="")\n\tion-title');
+    });
+
+    it('handles (click)', function () {
+        test('<button (click)="test()"></button>', 'button(\'(click)\'="test()")');
     });
 });
