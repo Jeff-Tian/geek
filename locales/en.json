@@ -1,1 +1,11 @@
-{}
+{
+  "EJS/html 转成 Jade/pug": "Convert EJS/html into Jade/pug",
+  "源代码": "Source code",
+  "更多叽歪出品": "More on jijiyy.me",
+  "zh": "中文",
+  "Why": "Why",
+  "should I convert my `ejs`/`html` to `jade`/`pug`?": "should I convert my `ejs`/`html` to `jade`/`pug`?",
+  "`EJS` is simple but stupid, it doesn't have layout. Don't use it, use `jade/pug` instead. It's elegant and fast for developing.": "`EJS` is simple but stupid, it doesn't have layout. Don't use it, use `jade/pug` instead. It's elegant and fast for developing.",
+  "`Html` is good for browser to render, but it's silly for coding. `jade/pug` helps you not getting lost in the messy tags.": "`Html` is good for browser to render, but it's silly for coding. `jade/pug` helps you not getting lost in the messy tags.",
+  "编译状态": "Compiling Status"
+}

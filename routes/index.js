@@ -9,8 +9,10 @@ function renderEJS2Jade(req, res, next) {
 
 module.exports = require('express').Router()
     .get('/', renderEJS2Jade)
-    .get('/ejs2jade', renderEJS2Jade)
-    .get('/html2jade', renderEJS2Jade)
+    .get('/en', renderEJS2Jade)
+    .get('/zh', renderEJS2Jade)
+    .get('/:locale?/ejs2jade', renderEJS2Jade)
+    .get('/:locale?/html2jade', renderEJS2Jade)
     .get('/the-ejs2jade.js', function (req, res, next) {
         var fs = require('fs');
         var ejs2jade = fs.readFileSync(__dirname + '/../tools/ejs2jade.js', 'utf-8');

@@ -13,16 +13,19 @@ html
                     div.ui.grid
                         div.seven.wide.column
                             h3 EJS / html
-                            textarea(ng-model="data.ejs", style="width: 100%;", rows="30", ng-required="true")
+                            textarea(ng-model="data.ejs", style="width: 100%;", rows="20", ng-required="true")
                         div.two.wide.column
                             h3 &nbsp;
                             button.ui.button(ng-disabled="!convertForm.$valid") Convert!
                         div.seven.wide.column
                             h3 jade / pug
-                            textarea(ng-model="data.jade", rows="30", style="width: 100%;")
+                            textarea(ng-model="data.jade", rows="20", style="width: 100%;")
                 div.field
                     pre(ng-model="data.errors")
 
+        include partial/adsense
+        include partial/why
+        include partial/footer
         script(src="#{cdn.host}bower_components/jquery/dist/jquery.min.js?#{cdn.version}")
         script(src="#{cdn.host}semantic/dist/semantic.min.js?#{cdn.version}")
         script(src="#{cdn.host}bower_components/angular/angular.min.js?#{cdn.version}")
