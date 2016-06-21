@@ -17,4 +17,8 @@ describe('angular 2 grammer', function () {
     it('handles (click)', function () {
         test('<button (click)="test()"></button>', 'button(\'(click)\'="test()")');
     });
+
+    it('handles [(ngModel)]', function () {
+        test('<ion-input type="number" (change)="updateValues()" (focus)="changeSource(\'beginIn\')" [(ngModel)]="model.beginIn" clearInput="" placeholder="期初借入 xxx 元"></ion-input>', 'ion-input(type="number", \'(change)\'="updateValues()", \'(focus)\'="changeSource(\'beginIn\')", \'[(ngModel)]\'="model.beginIn", clearInput="", placeholder="期初借入 xxx 元")');
+    });
 });

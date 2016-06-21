@@ -214,7 +214,7 @@ ejs2jade.convert = function (ejs) {
 
         function handleAttribute() {
             function rememberAttr() {
-                jade += (attrCount === 0 ? '(' : ', ') + (token[0] === '*' || (token[0] === '(' && token[token.length - 1] === ')') ? "'" + token + "'" : token);
+                jade += (attrCount === 0 ? '(' : ', ') + (token[0] === '*' || (token[0] === '(' && token[token.length - 1] === ')' || (token[0] === '[' && token[token.length - 1] === ']')) ? "'" + token + "'" : token);
                 token = '';
                 attrCount++;
             }
