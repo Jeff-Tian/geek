@@ -44,6 +44,10 @@ var States = {
 };
 
 function getCharType(c) {
+    if (c === undefined) {
+        return CharType.EOF;
+    }
+
     for (var t in CharType) {
         if (CharType[t].indexOf(c) >= 0) {
             return CharType[t];
@@ -90,7 +94,7 @@ function raiseOutOfStateError(i, line, col, char) {
 
 ejs2jade.convert = function (ejs) {
     var jade = '';
-    var selfClosedTags = ['input', 'br'];
+    var selfClosedTags = ['input', 'br', '!--'];
 
     var i = 0;
     var line = 1;
@@ -100,8 +104,13 @@ ejs2jade.convert = function (ejs) {
     var tagStack = [];
     var attrCount = 0;
 
+    function changeState(newState) {
+        console.log('changing state from ', state, ' to ', newState);
+        state = newState;
+    }
+
     console.log('============ start converting... =======');
-    while (i < ejs.length) {
+    while (i <= ejs.length) {
         function re(expectedCharTypes, caller) {
             var callerName = caller || arguments.callee;
 
@@ -180,8 +189,14 @@ ejs2jade.convert = function (ejs) {
                     jade += '\n';
                 }
 
-                jade += token;
+                if (token !== '!--') {
+                    jade += token;
+                } else {
+                    jade += '//';
+                }
+
                 tagStack.push(token);
+
                 token = '';
             }
 
@@ -269,12 +284,12 @@ ejs2jade.convert = function (ejs) {
 
         function handleValue() {
             if (charType === CharType.Letter ||
-                charType === CharType.WhiteSpace) {
+                charType === CharType.WhiteSpace || charType === CharType.Slash) {
                 token += c;
             } else if (charType === CharType.DoubleQuote) {
                 state = States.ValueEnd;
             } else {
-                re([CharType.Letter, CharType.DoubleQuote], arguments.callee);
+                re([CharType.Letter, CharType.WhiteSpace, CharType.Slash, CharType.DoubleQuote], arguments.callee);
             }
         }
 
@@ -293,11 +308,11 @@ ejs2jade.convert = function (ejs) {
             } else if (charType === CharType.TagEnd) {
                 consumeTokenAsAttr();
                 appendTagEnd();
-                state = States.TagEnd;
+                changeState(States.TagEnd);
             } else if (charType === CharType.Letter) {
                 consumeTokenAsAttr();
                 token += c;
-                state = States.Attribute;
+                changeState(States.Attribute);
             } else if (selfClosedTags.indexOf(tagStack[tagStack.length - 1]) >= 0) {
 
             } else {
@@ -307,28 +322,33 @@ ejs2jade.convert = function (ejs) {
 
         function handleTagEnd() {
             if (charType === CharType.EOF) {
-                state = States.End;
+                changeState(States.End);
             } else if (charType === CharType.TagStart) {
-                state = States.TagStart;
+                changeState(States.TagStart);
             } else if (charType === CharType.WhiteSpace) {
-
             } else if (charType === CharType.Letter) {
                 token += c;
-                state = States.Text;
+                changeState(States.Text);
             } else {
                 re([CharType.EOF, CharType.TagStart, CharType.Letter], arguments.callee);
             }
         }
 
         function handleText() {
-            if (charType === CharType.Letter) {
+            if (charType === CharType.Letter || charType === CharType.WhiteSpace || charType === CharType.EqualSign) {
                 token += c;
             } else if (charType === CharType.TagStart) {
-                jade += '\n' + duplicateString('\t', tagStack.length) + '| ' + token;
-                token = '';
-                state = States.TagStart;
+                if (tagStack[tagStack.length - 1] === 'script') {
+                    jade += '.\n' + duplicateString('\t', tagStack.length) + token;
+                    token = '';
+                    changeState(States.TagStart);
+                } else {
+                    jade += '\n' + duplicateString('\t', tagStack.length) + '| ' + token;
+                    token = '';
+                    changeState(States.TagStart);
+                }
             } else {
-                re([CharType.Letter, CharType.TagStart], arguments.callee);
+                re([CharType.Letter, CharType.WhiteSpace, CharType.EqualSign, CharType.TagStart], arguments.callee);
             }
         }
 
@@ -351,7 +371,7 @@ ejs2jade.convert = function (ejs) {
             }
         }
 
-        function handleNewLine() {
+        function countLineNumber() {
             if (c === '\n') {
                 line++;
                 console.log('line = ', line);
@@ -365,10 +385,13 @@ ejs2jade.convert = function (ejs) {
         var charType = getCharType(c);
         // console.log('charType = ', charType);
 
-        handleNewLine();
+        countLineNumber();
 
         console.log('state = ', state);
         console.log('token = ', token);
+        console.log('char = ', c, ' of ', charType);
+        console.log('jade = ', jade);
+        console.log('tagStack = ', tagStack);
         switch (state) {
             case States.Start:
                 handleStart();
