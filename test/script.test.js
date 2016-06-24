@@ -11,5 +11,7 @@ describe('script test', function () {
             '<script>\
                 (adsbygoogle = window.adsbygoogle || []).push({});\n</script>',
             'script.\n\t(adsbygoogle = window.adsbygoogle || []).push({});\n');
+
+        test('<ins></ins><script>\n(adsbygoogle = window.adsbygoogle || []).push({});\n</script>', 'ins\nscript.\n\t(adsbygoogle = window.adsbygoogle || []).push({});\n');
     });
 });
