@@ -269,12 +269,12 @@ ejs2jade.convert = function (ejs) {
 
         function handleValue() {
             if (charType === CharType.Letter ||
-                charType === CharType.WhiteSpace) {
+                charType === CharType.WhiteSpace || charType === CharType.Slash) {
                 token += c;
             } else if (charType === CharType.DoubleQuote) {
                 state = States.ValueEnd;
             } else {
-                re([CharType.Letter, CharType.DoubleQuote], arguments.callee);
+                re([CharType.Letter, CharType.WhiteSpace, CharType.Slash, CharType.DoubleQuote], arguments.callee);
             }
         }
 
