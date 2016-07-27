@@ -1,4 +1,4 @@
-# geek/ejs2pug/ejs2jade/html2pug/html2jade
+# geek/ejs2pug/ejs2jade/html2pug/html2jade [![Build Status](https://travis-ci.org/Jeff-Tian/geek.svg?branch=master)](https://travis-ci.org/Jeff-Tian/geek)
 Convert EJS/html snippet to jade/pug snippet.
 
 将 ejs/html 代码块转换成 jade/pug 代码块。
