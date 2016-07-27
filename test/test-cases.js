@@ -1,13 +1,28 @@
-var test = require('./prepare');
+var assert = require('assert');
 var fs = require('fs');
+var ejs2jade = require('../tools/ejs2jade');
 
 var baseDir = __dirname;
 
 describe('test cases', function () {
     it('tests all cases', function () {
-        var input = fs.readFileSync(baseDir + '/cases/doctype.html');
-        var expected = fs.readFileSync(baseDir + '/cases/doctype.jade');
+        var files = fs.readdirSync(baseDir + '/cases/');
+        files = files.filter(function (fileName) {
+            return fileName.indexOf('.html') >= 0;
+        }).map(function (f) {
+            return f.substr(0, f.indexOf('.html'));
+        });
 
-        test(input.toString(), expected.toString());
+        for (var i = 0; i < files.length; i++) {
+            var input = fs.readFileSync(baseDir + '/cases/' + files[i] + '.html');
+            var expected = fs.readFileSync(baseDir + '/cases/' + files[i] + '.jade');
+
+            var res = ejs2jade.convert(input.toString());
+
+            fs.writeFileSync(baseDir + '/cases/' + files[i] + '.output.jade', res.jade);
+
+            assert.equal(expected.toString(), res.jade.replace(/\t/g, '    '));
+            assert.deepStrictEqual([], res.errors);
+        }
     });
 });

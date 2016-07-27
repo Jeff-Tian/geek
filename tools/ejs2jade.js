@@ -106,7 +106,7 @@ ejs2jade.convert = function (ejs) {
     ejs = trimExtra(ejs);
 
     var jade = '';
-    var selfClosedTags = ['input', 'br', '!--'];
+    var selfClosedTags = ['input', 'br', '!--', 'meta', 'link'];
 
     var i = 0;
     var line = 1;
@@ -200,11 +200,10 @@ ejs2jade.convert = function (ejs) {
             function rememberTag() {
                 console.log('!!!remembering tag: ', token);
 
-                var indents = selfClosedTags.indexOf(tagStack[tagStack.length - 1]) >= 0 ? tagStack.length - 1 : tagStack.length;
-
                 if (tagStack.length > 0) {
+                    console.log('indenting...');
                     jade += '\n';
-                    jade += duplicateString('\t', indents);
+                    jade += duplicateString('\t', tagStack.length);
                 } else if (jade !== '') {
                     jade += '\n';
                 }
@@ -304,12 +303,12 @@ ejs2jade.convert = function (ejs) {
 
         function handleValue() {
             if (charType === CharType.Letter ||
-                charType === CharType.WhiteSpace || charType === CharType.Slash) {
+                charType === CharType.WhiteSpace || charType === CharType.Slash || charType === CharType.EqualSign) {
                 token += c;
             } else if (charType === CharType.DoubleQuote) {
                 state = States.ValueEnd;
             } else {
-                re([CharType.Letter, CharType.WhiteSpace, CharType.Slash, CharType.DoubleQuote], arguments.callee);
+                re([CharType.Letter, CharType.WhiteSpace, CharType.Slash, CharType.DoubleQuote, CharType.EqualSign], arguments.callee);
             }
         }
 
@@ -344,6 +343,10 @@ ejs2jade.convert = function (ejs) {
             if (charType === CharType.EOF) {
                 changeState(States.End);
             } else if (charType === CharType.TagStart) {
+                if (selfClosedTags.indexOf(tagStack[tagStack.length - 1]) >= 0) {
+                    tagStack.pop();
+                }
+
                 changeState(States.TagStart);
             } else if (charType === CharType.WhiteSpace) {
             } else if (charType === CharType.Letter) {
