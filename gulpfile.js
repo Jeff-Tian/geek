@@ -1,7 +1,7 @@
 var gulp = require('gulp');
 var jshint = require('gulp-jshint');
 var sh = require('shelljs');
-var karma = require('karma').server;
+var karma = require('karma');
 
 gulp.task('jshint', function () {
     gulp
@@ -23,10 +23,10 @@ gulp.task('start', function (done) {
 gulp.task('test', ['karma']);
 
 gulp.task('karma', function (done) {
-    karma.start({
+    new karma.Server({
         configFile: __dirname + '/tests/karma.conf.js',
         singleRun: true
-    }, done);
+    }, done).start();
 });
 
 gulp.task('ensurePhantomJsPath', function (done) {
