@@ -20,7 +20,7 @@ gulp.task('start', function (done) {
     sh.exec('node app.js', done);
 });
 
-gulp.task('test', ['ensurePhantomJsPath', 'karma']);
+gulp.task('test', ['karma']);
 
 gulp.task('karma', function (done) {
     karma.start({

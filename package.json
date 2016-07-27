@@ -4,7 +4,7 @@
   "description": "Whatever geek tools.",
   "main": "app.js",
   "scripts": {
-    "test": "gulp mocha && gulp test"
+    "test": "npm install -g mocha && gulp mocha && gulp test"
   },
   "repository": {
     "type": "git",
