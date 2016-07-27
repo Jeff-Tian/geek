@@ -92,7 +92,19 @@ function raiseOutOfStateError(i, line, col, char) {
     errors.push(m);
 }
 
+function trimExtra(ejs) {
+    var extra = '<!DOCTYPE html>';
+
+    if (ejs.indexOf(extra) === 0) {
+        return ejs.substr(extra.length);
+    }
+
+    return ejs;
+}
+
 ejs2jade.convert = function (ejs) {
+    ejs = trimExtra(ejs);
+
     var jade = '';
     var selfClosedTags = ['input', 'br', '!--'];
 
@@ -125,10 +137,18 @@ ejs2jade.convert = function (ejs) {
         }
 
         function handleStart() {
-            if (charType !== CharType.TagStart) {
-                re([CharType.TagStart], arguments.callee);
-            } else {
-                state = States.TagStart;
+            switch (charType) {
+                case CharType.EOF:
+                    state = States.End;
+                    break;
+
+                case CharType.TagStart:
+                    state = States.TagStart;
+                    break;
+
+                default:
+                    re([CharType.TagStart, CharType.EOF], arguments.callee);
+                    break;
             }
         }
 
