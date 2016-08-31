@@ -1,9 +1,10 @@
 var assert = require('assert');
 var ejs2jade = require('../tools/ejs2jade');
 
-function test(ejs, expectedJade) {
+function test(ejs, expectedJade, replaceTab) {
     var res = ejs2jade.convert(ejs);
-    assert.equal(expectedJade, res.jade.replace(/\t/g, '    '));
+    var actual = replaceTab ? res.jade.replace(/\t/g, '    ') : res.jade;
+    assert.equal(expectedJade, actual);
     assert.deepStrictEqual([], res.errors);
 }
 

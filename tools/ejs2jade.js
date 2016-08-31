@@ -40,7 +40,9 @@ var States = {
     EJSCodeStart: '<%=',
     EJSCode: 'ejscode',
     EJSCodeEnd: '%>',
-    Error: ''
+    Error: '',
+    Comments: '/*',
+    CommentsEnd: '*/'
 };
 
 function getCharType(c) {
@@ -228,6 +230,10 @@ ejs2jade.convert = function (ejs) {
 
             if (charType === CharType.Letter) {
                 token += c;
+
+                if (token === '!--') {
+                    changeState(States.Comments);
+                }
             } else if (charType === CharType.WhiteSpace) {
                 rememberTag();
                 attrCount = 0;
@@ -297,6 +303,20 @@ ejs2jade.convert = function (ejs) {
 
             } else {
                 re([CharType.Letter, CharType.EqualSign, CharType.TagEnd, CharType.WhiteSpace], arguments.callee);
+            }
+        }
+
+        function handleComments() {
+            if (charType === CharType.Letter || charType === CharType.EqualSign || charType === CharType.WhiteSpace || charType === CharType.TagStart || charType === CharType.DoubleQuote || charType === CharType.Percentage || charType === CharType.Slash) {
+                token += c;
+            } else if (charType === CharType.TagEnd) {
+                token += c;
+                var s = token.substr(token.length - 3);
+                if (s === '-->') {
+                    changeState(States.CommentsEnd);
+                }
+            } else {
+                re([CharType.Letter, CharType.TagEnd, CharType.EqualSign, CharType.WhiteSpace, CharType.TagStart, CharType.Slash, CharType.DoubleQuote, CharType.Percentage], arguments.callee);
             }
         }
 
@@ -494,6 +514,12 @@ ejs2jade.convert = function (ejs) {
                 break;
             case States.AttributeEnd:
                 handleAttributeEnd();
+                break;
+            case States.Comments:
+                handleComments();
+                break;
+            case States.CommentsEnd:
+                handleStart();
                 break;
             default :
                 raiseOutOfStateError(i, line, col, c);
