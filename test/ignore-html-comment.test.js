@@ -7,4 +7,17 @@ describe('ignore html comments', function () {
             '//(ejs2pug="", --="")'
         );
     });
+
+    it('ignores html comments containing tags', function () {
+        test(
+            '<li></li>\
+            <!--<li>\
+            <a href="">Language</a>\
+            </li>-->',
+            'li\n\
+//\n\
+    a(href="")\n\
+        | Language'
+        );
+    });
 });

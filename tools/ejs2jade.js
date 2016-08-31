@@ -215,10 +215,10 @@ ejs2jade.convert = function (ejs) {
                     jade += '\n';
                 }
 
-                if (token !== '!--') {
-                    jade += token;
-                } else {
+                if (token.indexOf('!--') === 0) {
                     jade += '//';
+                } else {
+                    jade += token;
                 }
 
                 tagStack.push(token);

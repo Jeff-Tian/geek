@@ -3,7 +3,7 @@ var ejs2jade = require('../tools/ejs2jade');
 
 function test(ejs, expectedJade) {
     var res = ejs2jade.convert(ejs);
-    assert.equal(expectedJade, res.jade);
+    assert.equal(expectedJade, res.jade.replace(/\t/g, '    '));
     assert.deepStrictEqual([], res.errors);
 }
 
