@@ -96,16 +96,17 @@ function trimExtra(ejs) {
     var extra = '<!DOCTYPE html>';
 
     if (ejs.indexOf(extra) === 0) {
-        return ejs.substr(extra.length);
+        return {ejs: ejs.substr(extra.length), jade: 'doctype html\n'};
     }
 
-    return ejs;
+    return {ejs: ejs, jade: ''};
 }
 
 ejs2jade.convert = function (ejs) {
-    ejs = trimExtra(ejs);
+    var res = trimExtra(ejs);
 
-    var jade = '';
+    ejs = res.ejs;
+    var jade = res.jade;
     var selfClosedTags = ['input', 'br', '!--', 'meta', 'link'];
 
     var i = 0;
@@ -117,7 +118,7 @@ ejs2jade.convert = function (ejs) {
     var attrCount = 0;
 
     function changeState(newState) {
-        console.log('changing state from ', state, ' to ', newState);
+        // console.log('changing state from ', state, ' to ', newState);
         state = newState;
     }
 
@@ -146,8 +147,11 @@ ejs2jade.convert = function (ejs) {
                     state = States.TagStart;
                     break;
 
+                case CharType.WhiteSpace:
+                    break;
+
                 default:
-                    re([CharType.TagStart, CharType.EOF], arguments.callee);
+                    re([CharType.TagStart, CharType.EOF, CharType.WhiteSpace], arguments.callee);
                     break;
             }
         }
