@@ -117,6 +117,9 @@ ejs2jade.convert = function (ejs) {
     var tagStack = [];
     var attrCount = 0;
 
+    var ejsCodeInAttributeValue = false;
+    var ejsCodeInsideAttrValue = '';
+
     function changeState(newState) {
         // console.log('changing state from ', state, ' to ', newState);
         state = newState;
@@ -306,13 +309,39 @@ ejs2jade.convert = function (ejs) {
         }
 
         function handleValue() {
+            if (ejsCodeInAttributeValue) {
+                if (ejsCodeInsideAttrValue === '<' && charType === CharType.Percentage) {
+                    ejsCodeInsideAttrValue += c;
+                } else if (ejsCodeInsideAttrValue === '<%' && charType === CharType.EqualSign) {
+                    ejsCodeInsideAttrValue += c;
+                } else if (ejsCodeInsideAttrValue.indexOf('<%=') === 0 && (charType === CharType.Letter || charType === CharType.WhiteSpace || charType === CharType.Slash || charType === CharType.EqualSign || charType === CharType.DoubleQuote)) {
+                    ejsCodeInsideAttrValue += c;
+                } else if (ejsCodeInsideAttrValue.indexOf('<%=') === 0 && (charType === CharType.Percentage)) {
+                    ejsCodeInsideAttrValue += c;
+                } else if (ejsCodeInsideAttrValue.indexOf('<%=') === 0 && ejsCodeInsideAttrValue[ejsCodeInsideAttrValue.length - 1] === '%' && charType === CharType.TagEnd) {
+                    ejsCodeInsideAttrValue += c;
+
+                    ejsCodeInAttributeValue = false;
+                    console.log('!!!exit from ejs code inside attr value with: ', ejsCodeInsideAttrValue);
+                    token += ejsCodeInsideAttrValue.replace('<%=', '#{').replace('%>', '}').replace();
+                } else {
+                    re(['<%= some ejs code here %>'], arguments.callee);
+                }
+
+                return;
+            }
+
             if (charType === CharType.Letter ||
                 charType === CharType.WhiteSpace || charType === CharType.Slash || charType === CharType.EqualSign) {
                 token += c;
             } else if (charType === CharType.DoubleQuote) {
                 state = States.ValueEnd;
+            } else if (charType === CharType.TagStart) {
+                ejsCodeInAttributeValue = true;
+                ejsCodeInsideAttrValue += c;
+                console.log('!!! found ejs code in value!!!');
             } else {
-                re([CharType.Letter, CharType.WhiteSpace, CharType.Slash, CharType.DoubleQuote, CharType.EqualSign], arguments.callee);
+                re([CharType.Letter, CharType.WhiteSpace, CharType.Slash, CharType.DoubleQuote, CharType.EqualSign, CharType.TagStart, CharType.Percentage, CharType.EqualSign], arguments.callee);
             }
         }
 
