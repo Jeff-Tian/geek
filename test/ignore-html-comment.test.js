@@ -4,7 +4,7 @@ describe('ignore html comments', function () {
     it('ignores html comments', function () {
         test(
             '<!-- ejs2pug -->',
-            '//(ejs2pug="", --="")'
+            ''
         );
     });
 
@@ -14,10 +14,7 @@ describe('ignore html comments', function () {
             <!--<li>\
             <a href="">Language</a>\
             </li>-->',
-            'li\n\
-//\n\
-    a(href="")\n\
-        | Language'
+            'li'
         );
     });
 });
