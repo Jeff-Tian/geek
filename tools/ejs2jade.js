@@ -324,6 +324,7 @@ ejs2jade.convert = function (ejs) {
                     ejsCodeInAttributeValue = false;
                     console.log('!!!exit from ejs code inside attr value with: ', ejsCodeInsideAttrValue);
                     token += ejsCodeInsideAttrValue.replace('<%=', '#{').replace('%>', '}').replace();
+                    ejsCodeInsideAttrValue = '';
                 } else {
                     re(['<%= some ejs code here %>'], arguments.callee);
                 }
